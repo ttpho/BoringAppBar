@@ -74,10 +74,10 @@ class BackgroundTextPainter extends CustomPainter {
 
   String _text() => _list_string[random.nextInt(_list_string.length)];
 
-  Paragraph _makeParagraph(final String text) {
+  Paragraph _makeParagraph(final String text, final double fontSize) {
     final textStyle = ui.TextStyle(
       color: Colors.white,
-      fontSize: _fontSize(),
+      fontSize: fontSize,
     );
 
     final paragraphBuilder = ui.ParagraphBuilder(_paragraphStyle)
@@ -89,15 +89,20 @@ class BackgroundTextPainter extends CustomPainter {
     return paragraph;
   }
 
+  drawParagraph(final Canvas canvas, final String text, final double fontSize,
+      final Offset offset) {
+    canvas.drawParagraph(_makeParagraph(text, fontSize), offset);
+  }
+
   BackgroundTextPainter(this.width, this.height);
 
   @override
   void paint(Canvas canvas, Size size) {
     for (int i = 0; i < number_text_paragraph; i++) {
-      canvas.drawParagraph(_makeParagraph(_text()), _offset());
+      drawParagraph(canvas, _text(), _fontSize(), _offset());
     }
-    canvas.drawParagraph(_makeParagraph('🏕'), _offset());
-    canvas.drawParagraph(_makeParagraph('⛄'), _offset());
+    drawParagraph(canvas, '🏕', _fontSize(), _offset());
+    drawParagraph(canvas, '⛄', _fontSize(), _offset());
   }
 
   @override
