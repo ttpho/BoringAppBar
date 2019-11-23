@@ -40,7 +40,9 @@ class _BoringAppBarState extends State<BoringAppBar> {
 
 class BackgroundTextPainter extends CustomPainter {
   static const number_text_paragraph = 20;
-  static const _list_string = ['🎅', '🎄'];
+
+  // source emoji: https://unicode.org/emoji/charts/full-emoji-list.html
+  static const _list_string = ['🎄', '🌲'];
   static const _font_size_min = 8;
   static const _font_size_max = 30;
   static const _space_offset_width = 5;
@@ -61,14 +63,18 @@ class BackgroundTextPainter extends CustomPainter {
 
   double _fontSize() => randomMinMax(_font_size_min, _font_size_max);
 
-  Offset _offset() => Offset(
-      randomMinMax(_space_offset_width, width.toInt() - _space_offset_width),
-      randomMinMax(
-          _space_offset_height, height.toInt() - _space_offset_height));
+  Offset _offset() {
+    var x =
+        randomMinMax(_space_offset_width, width.toInt() - _space_offset_width);
+    var heightY = x * height / width;
+    var y = randomMinMax((heightY - _space_offset_height).toInt(),
+        (heightY + _space_offset_height).toInt());
+    return Offset(width - x, y);
+  }
 
   String _text() => _list_string[random.nextInt(_list_string.length)];
 
-  Paragraph _makeParagraph() {
+  Paragraph _makeParagraph(final String text) {
     final textStyle = ui.TextStyle(
       color: Colors.white,
       fontSize: _fontSize(),
@@ -76,7 +82,7 @@ class BackgroundTextPainter extends CustomPainter {
 
     final paragraphBuilder = ui.ParagraphBuilder(_paragraphStyle)
       ..pushStyle(textStyle)
-      ..addText(_text());
+      ..addText(text);
 
     final paragraph = paragraphBuilder.build();
     paragraph.layout(_constraints);
@@ -88,8 +94,10 @@ class BackgroundTextPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     for (int i = 0; i < number_text_paragraph; i++) {
-      canvas.drawParagraph(_makeParagraph(), _offset());
+      canvas.drawParagraph(_makeParagraph(_text()), _offset());
     }
+    canvas.drawParagraph(_makeParagraph('🏕'), _offset());
+    canvas.drawParagraph(_makeParagraph('⛄'), _offset());
   }
 
   @override
